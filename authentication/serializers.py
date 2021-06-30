@@ -15,7 +15,7 @@ from django.contrib.auth.password_validation import validate_password
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email')
+        fields = ('first_name', 'last_name', 'email','rating', 'feedback_text')
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=6, write_only=True, validators=[validate_password])
@@ -26,6 +26,11 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'first_name','last_name','email', 'password','password2']
+        read_only_fields = ('updated_at','date_created', 'client_ip')
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context.get('request').META.get("REMOTE_ADDR")
+        return User.objects.create(**validated_data)
 
     # def validate(self, attrs):
     #     email = attrs.get('email', '')
@@ -73,6 +78,7 @@ class LoginSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id','email', 'password', 'tokens']
 
+    
     def validate(self, attrs):
         email = attrs.get('email', '')
         password = attrs.get('password', '')
@@ -203,3 +209,9 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+class RatingFeedbackSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('rating', 'feedback_text')

@@ -232,6 +232,15 @@ class DeleteUserView(generics.DestroyAPIView):
     serializer_class = UserSerializer
     lookup_field = 'email'
 
+class UserRatingFeedbackView(generics.UpdateAPIView):
+
+    queryset = User.objects.all()
+    permission_classes = (IsAuthenticated,)
+    parser_classes = (MultiPartParser, FormParser) #we can remove this 
+    serializer_class = RatingFeedbackSerializer
+    lookup_field = 'email'
+
+
 # class ProfileUpdateView(generics.UpdateAPIView):
 #     queryset = User.objects.all()
 #     serializer_class = UpdateUserSerializer

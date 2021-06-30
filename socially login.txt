@@ -1,0 +1,7 @@
+facebook:
+ID: 1826548344220843
+KEY: 06c5de5b3d1b38c7c2951cbfbc9a5fd1
+
+GOOGLE
+ID: 194801247039-6m8n05ro87i764bdje63ad3ua22d4llp.apps.googleusercontent.com
+KEY: 4qKCy4woxxLy_eqKZEGIyK7Y

@@ -50,9 +50,22 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    client_ip = models.GenericIPAddressField(null=True)
+
     auth_provider = models.CharField(
         max_length=255, blank=False,
         null=False, default=AUTH_PROVIDERS.get('email'))
+
+    CHOICES = (
+    ('1 star','1 star'),
+    ('2 star', '2 star'),
+    ('3 star','3 star'),
+    ('4 star','4 star'),
+    ('5 star','5 star'),)
+
+
+    rating = models.CharField(max_length=6, choices=CHOICES, default='5 star')
+    feedback_text = models.TextField(max_length=1000,null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -86,3 +99,4 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # def __str__(self):
     #     return "{}".format(self.email)
+

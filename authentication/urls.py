@@ -19,7 +19,8 @@ urlpatterns = [
 #     path('update_profile/<int:pk>/', UpdateProfileView.as_view(), name='auth_update_profile'),
     path('update_profile/<email>/', UpdateProfileView.as_view(), name='auth_update_profile'),
     path('deleteuser/<email>/', DeleteUserView.as_view(),name='delete_user'),
-    # path('profile_update_view/<email>',ProfileUpdateView.as_view(),name='')
+    # path('profile_update_view/<email>',ProfileUpdateView.as_view(),name=''),
+   path('rating_feedback/<email>/',UserRatingFeedbackView.as_view(),name='feedback'),
   
 
 ]
