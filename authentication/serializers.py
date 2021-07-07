@@ -28,9 +28,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['id', 'first_name','last_name','email', 'password','password2']
         read_only_fields = ('updated_at','date_created', 'client_ip')
 
-    def create(self, validated_data):
-        validated_data['user'] = self.context.get('request').META.get("REMOTE_ADDR")
-        return User.objects.create(**validated_data)
+    # def create(self, validated_data):
+    #     validated_data['user'] = self.context.get('request').META.get("REMOTE_ADDR")
+    #     return User.objects.create(**validated_data)
 
     # def validate(self, attrs):
     #     email = attrs.get('email', '')
@@ -50,6 +50,9 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
         
+    # def create(self, validated_data):
+    #     validated_data['email'] = self.context.get('request').META.get("REMOTE_ADDR")
+    #     return User.objects.create(**validated_data)
         
 
 
@@ -215,3 +218,17 @@ class RatingFeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('rating', 'feedback_text')
+
+
+# class LoglistSerializer(serializers.ModelSerializer):
+#     """Serializer to map the model instance into JSON format."""
+
+#     class Meta:
+#         """Meta class to map serializer's fields with the model fields."""
+#         model = User
+#         fields = ('id','client_ip')
+#         read_only_fields = ('id','client_ip')
+
+#     def create(self, validated_data):
+#         validated_data['user'] = self.context.get('request').META.get("REMOTE_ADDR")
+#         return User.objects.create(**validated_data)

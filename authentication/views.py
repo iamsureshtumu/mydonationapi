@@ -262,3 +262,16 @@ class UserRatingFeedbackView(generics.UpdateAPIView):
 #             current_user.first_name = data_user.get('first_name', current_user.first_name)
 #             current_user.last_name = data_user.get('username', current_user.last_name)
 #             current_user.save()
+
+
+# class CreateView(generics.ListCreateAPIView):
+#     """This class defined the create behaviour of our rest api."""
+#     queryset = User.objects.all()
+#     serializer_class = LoglistSerializer
+
+#     def perform_create(self, serializer):
+#         serializer.save()
+
+# class DetailsView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = LoglistSerializer

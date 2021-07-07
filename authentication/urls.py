@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import *
-from django.conf.urls import url 
+from authentication import views
+# from django.conf.urls import url 
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
@@ -20,7 +21,8 @@ urlpatterns = [
     path('update_profile/<email>/', UpdateProfileView.as_view(), name='auth_update_profile'),
     path('deleteuser/<email>/', DeleteUserView.as_view(),name='delete_user'),
     # path('profile_update_view/<email>',ProfileUpdateView.as_view(),name=''),
-   path('rating_feedback/<email>/',UserRatingFeedbackView.as_view(),name='feedback'),
-  
+    path('rating_feedback/<email>/',UserRatingFeedbackView.as_view(),name='feedback'),
+    # path('list/', CreateView.as_view(),name='view'),
+    # path('dlist/',DetailsView.as_view(),name='dview'),
 
 ]

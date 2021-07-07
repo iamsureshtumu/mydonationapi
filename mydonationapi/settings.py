@@ -112,7 +112,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'MYD_test',
+        'NAME': 'MYP_test',
         'USER': 'root',
         'PASSWORD': 'suresh',
         'HOST': 'localhost',
