@@ -112,7 +112,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'MYP_test',
+        'NAME': 'testing',
         'USER': 'root',
         'PASSWORD': 'suresh',
         'HOST': 'localhost',
@@ -131,8 +131,8 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=120),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=30),
 }
 
 # Password validation

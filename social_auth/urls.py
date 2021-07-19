@@ -5,7 +5,7 @@ from .views import GoogleSocialAuthView, FacebookSocialAuthView, TwitterSocialAu
 urlpatterns = [
     path('google/', GoogleSocialAuthView.as_view()),
     path('facebook/', FacebookSocialAuthView.as_view()),
-    path('twitter/', TwitterSocialAuthView.as_view()),
+    # path('twitter/', TwitterSocialAuthView.as_view()),
 
 
 ]

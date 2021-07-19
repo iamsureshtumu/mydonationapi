@@ -3,7 +3,7 @@ from rest_framework import generics, status, views, permissions, mixins
 from .serializers import RegisterSerializer, SetNewPasswordSerializer, ResetPasswordEmailRequestSerializer, EmailVerificationSerializer, LoginSerializer, LogoutSerializer
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import User
+from .models import *
 from .utils import Util
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
@@ -25,6 +25,7 @@ from .serializers import *
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.parsers import FileUploadParser
+from rest_framework import viewsets
 
 class CustomRedirect(HttpResponsePermanentRedirect):
 
@@ -87,7 +88,6 @@ class LoginAPIView(generics.GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 class RequestPasswordResetEmail(generics.GenericAPIView):
     serializer_class = ResetPasswordEmailRequestSerializer
@@ -174,6 +174,8 @@ class LogoutAPIView(generics.GenericAPIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    # def get_object(self):
+    #     return self.request.user
 
 class ChangePasswordView(generics.UpdateAPIView):
     """
@@ -223,55 +225,55 @@ class UpdateProfileView(generics.UpdateAPIView):
     permission_classes = (IsAuthenticated,)
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = UpdateUserSerializer
-    lookup_field = 'email'
+    # lookup_field = 'email'
+
+    def get_object(self):
+        return self.request.user
 
 class DeleteUserView(generics.DestroyAPIView):
     
     queryset = User.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
-    lookup_field = 'email'
+    # lookup_field = 'email'
+    
+    def get_object(self):
+        return self.request.user
 
-class UserRatingFeedbackView(generics.UpdateAPIView):
+class userRatingFeedbackView(generics.UpdateAPIView): #we can also use CreateApiView directly for rating and feedback. updateview is useful to edit there review 
 
     queryset = User.objects.all()
     permission_classes = (IsAuthenticated,)
     parser_classes = (MultiPartParser, FormParser) #we can remove this 
-    serializer_class = RatingFeedbackSerializer
-    lookup_field = 'email'
+    serializer_class = userRatingFeedbackSerializer
+    # lookup_field = 'email'
 
+    def get_object(self):
+        return self.request.user
 
-# class ProfileUpdateView(generics.UpdateAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UpdateUserSerializer
-#     lookup_field = 'email'
-#     user = UserSerializer
+#anonymous user rating API
+class AnonymousRatingFeedbackView(generics.CreateAPIView):
+    
+    queryset = RatingFeedback.objects.all()
+    # permission_classes = (IsAuthenticated,)
+    parser_classes = (MultiPartParser, FormParser) #we can remove this 
+    serializer_class = AnonymousRatingFeedbackSerializer
+    # lookup_field = 'name'
 
-#     def update(self, request, *args, **kwargs):
-#         instance = self.get_object()
-#         validated_data = request.data
-#         print(validated_data)
-#         data_user = validated_data.pop('user')
-#         instance.first_name = validated_data['first_name']
-#         instance.last_name = validated_data['last_name']
-#         instance.email = validated_data['email']
-#         instance.save()
+class GuestUserApiView(generics.CreateAPIView):
+    queryset = GuestUser.objects.all()
+    # permission_classes = (IsAuthenticated,)
+    # parser_classes = (MultiPartParser, FormParser) #we can remove this 
+    serializer_class = GuestUserSerializer
+    # lookup_field = 'name'
 
-#         if 'id' in data_user.keys():
-#             current_user = User.objects.get(id=data_user['id'])
-#             current_user.first_name = data_user.get('first_name', current_user.first_name)
-#             current_user.last_name = data_user.get('username', current_user.last_name)
-#             current_user.save()
+    # def get_object(self):
+    #     return self.request.id
 
+class TransactionSuccessfulAPIView(generics.UpdateAPIView):
+    queryset = GuestUser.objects.all()
+    # permission_classes = (IsAuthenticated,)
+    parser_classes = (MultiPartParser, FormParser) #we can remove this 
+    serializer_class = TransactionSuccessfulSerializer
+    lookup_field = 'secret_key'
 
-# class CreateView(generics.ListCreateAPIView):
-#     """This class defined the create behaviour of our rest api."""
-#     queryset = User.objects.all()
-#     serializer_class = LoglistSerializer
-
-#     def perform_create(self, serializer):
-#         serializer.save()
-
-# class DetailsView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = LoglistSerializer

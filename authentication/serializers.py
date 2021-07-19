@@ -15,17 +15,17 @@ from django.contrib.auth.password_validation import validate_password
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email','rating', 'feedback_text')
+        fields = ('first_name', 'last_name', 'email', 'profile_picture')
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=6, write_only=True, validators=[validate_password])
-    password2 = serializers.CharField(write_only=True, required=True)
+    # password2 = serializers.CharField(write_only=True, required=True)
     # default_error_messages = {
     #     'Email': 'This Email is already exists'}
 
     class Meta:
         model = User
-        fields = ['id', 'first_name','last_name','email', 'password','password2']
+        fields = ['id', 'first_name','last_name','email', 'password']
         read_only_fields = ('updated_at','date_created', 'client_ip')
 
     # def create(self, validated_data):
@@ -41,11 +41,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         #         self.default_error_messages)
         # return attrs
 
-    def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
+    # def validate(self, attrs):
+    #     if attrs['password'] != attrs['password2']:
+    #         raise serializers.ValidationError({"password": "Password fields didn't match."})
 
-        return attrs
+    #     return attrs
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
@@ -213,22 +213,27 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 
         return instance
 
-class RatingFeedbackSerializer(serializers.ModelSerializer):
-
+class userRatingFeedbackSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = User
         fields = ('rating', 'feedback_text')
 
+class AnonymousRatingFeedbackSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = RatingFeedback
+        fields = ('rating', 'feedback_text')
 
-# class LoglistSerializer(serializers.ModelSerializer):
-#     """Serializer to map the model instance into JSON format."""
 
-#     class Meta:
-#         """Meta class to map serializer's fields with the model fields."""
-#         model = User
-#         fields = ('id','client_ip')
-#         read_only_fields = ('id','client_ip')
+class GuestUserSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = GuestUser
+        fields = ('secret_key','first_name', 'last_name', 'email', 'portfolio_name', 'amount', 'charities')
 
-#     def create(self, validated_data):
-#         validated_data['user'] = self.context.get('request').META.get("REMOTE_ADDR")
-#         return User.objects.create(**validated_data)
+class TransactionSuccessfulSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = GuestUser
+        fields = ('secret_key', 'transaction_successful_ID')

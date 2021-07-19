@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Group, Permission, PermissionsMixin
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.translation import gettext as _
@@ -63,11 +64,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=False, default=AUTH_PROVIDERS.get('email'))
 
     CHOICES = (
-    ('1 star','1 star'),
-    ('2 star', '2 star'),
-    ('3 star','3 star'),
+    ('5 star','5 star'),
     ('4 star','4 star'),
-    ('5 star','5 star'),)
+    ('3 star','3 star'),
+    ('2 star','2 star'),
+    ('1 star','1 star'),)
 
 
     rating = models.CharField(max_length=6, choices=CHOICES, default='5 star')
@@ -91,133 +92,36 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __unicode__(self):
         return u"photo {0}".format(self.file.url)
 
-    # @staticmethod
-    # def has_perm(perm, obj=None):
-    #     # "Does the user have a specific permission?"
-    #     # Simplest possible answer: Yes, always
-    #     return True
 
-    # @staticmethod
-    # def has_module_perms(app_label):
-    #     # "Does the user have permissions to view the app `app_label`?"
-    #     # Simplest possible answer: Yes, always
-    #     return True
-
-    # def __str__(self):
-    #     return "{}".format(self.email)
-
-
-
-"""
-# A few helper functions for common logic between User and AnonymousUser.
-def _user_get_permissions(user, obj, from_name):
-    permissions = set()
-    name = 'get_%s_permissions' % from_name
-    for backend in auth.get_backends():
-        if hasattr(backend, name):
-            permissions.update(getattr(backend, name)(user, obj))
-    return permissions
-
-
-def _user_has_perm(user, perm, obj):
-    
-    # A backend can raise `PermissionDenied` to short-circuit permission checking.
-    
-    for backend in auth.get_backends():
-        if not hasattr(backend, 'has_perm'):
-            continue
-        try:
-            if backend.has_perm(user, perm, obj):
-                return True
-        except PermissionDenied:
-            return False
-    return False
-
-def _user_has_module_perms(user, app_label):
-    
-    # A backend can raise `PermissionDenied` to short-circuit permission checking.
-    
-    
-    for backend in auth.get_backends():
-        if not hasattr(backend, 'has_module_perms'):
-            continue
-        try:
-            if backend.has_module_perms(user, app_label):
-                return True
-        except PermissionDenied:
-            return False
-    return False
-
-
-class AnonymousUser:
-    id = None
-    pk = None
-    username = ''
-    is_staff = False
-    is_active = False
-    is_superuser = False
-    _groups = EmptyManager(Group)
-    _user_permissions = EmptyManager(Permission)
+class GuestUser(AbstractBaseUser):
+    secret_key = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False, unique=True)
+    transaction_successful_ID= models.CharField(null=True, max_length=1000)
+    first_name = models.CharField(_('first name'), max_length=30)
+    last_name = models.CharField(_('last name'), max_length=30)
+    email = models.EmailField(_('email address'), unique=True)
+    portfolio_name = models.CharField(max_length=1000)
+    amount = models.IntegerField(null=True)
+    charities = models.TextField(max_length=10000)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    client_ip = models.GenericIPAddressField(null = True)
 
     def __str__(self):
-        return 'AnonymousUser'
+        return self.email
 
-    def __eq__(self, other):
-        return isinstance(other, self.__class__)
 
-    def __hash__(self):
-        return 1  # instances always return the same hash value
+CHOICES = (
+    ('5 star','5 star'),
+    ('4 star','4 star'),
+    ('3 star','3 star'),
+    ('2 star','2 star'),
+    ('1 star','1 star'),)
 
-    def __int__(self):
-        raise TypeError('Cannot cast AnonymousUser to int. Are you trying to use it in place of User?')
+class RatingFeedback(models.Model):
+    name =models.CharField(max_length=20,null=True)
+    rating = models.CharField(max_length=6, choices=CHOICES, default='5 star')
+    feedback_text = models.TextField(max_length=1000,null=True)
 
-    def save(self):
-        raise NotImplementedError("Django doesn't provide a DB representation for AnonymousUser.")
+    def __str__(self):
+        return self.rating
 
-    def delete(self):
-        raise NotImplementedError("Django doesn't provide a DB representation for AnonymousUser.")
-
-    def set_password(self, raw_password):
-        raise NotImplementedError("Django doesn't provide a DB representation for AnonymousUser.")
-
-    def check_password(self, raw_password):
-        raise NotImplementedError("Django doesn't provide a DB representation for AnonymousUser.")
-
-    @property
-    def groups(self):
-        return self._groups
-
-    @property
-    def user_permissions(self):
-        return self._user_permissions
-
-    def get_user_permissions(self, obj=None):
-        return _user_get_permissions(self, obj, 'user')
-
-    def get_group_permissions(self, obj=None):
-        return set()
-
-    def get_all_permissions(self, obj=None):
-        return _user_get_permissions(self, obj, 'all')
-
-    def has_perm(self, perm, obj=None):
-        return _user_has_perm(self, perm, obj=obj)
-
-    def has_perms(self, perm_list, obj=None):
-        return all(self.has_perm(perm, obj) for perm in perm_list)
-
-    def has_module_perms(self, module):
-        return _user_has_module_perms(self, module)
-
-    @property
-    def is_anonymous(self):
-        return True
-
-    @property
-    def is_authenticated(self):
-        return False
-
-    def get_username(self):
-        return self.username
-
-"""
