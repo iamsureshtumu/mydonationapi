@@ -6,6 +6,7 @@ from django.utils.translation import gettext as _
 # from django.db.models.manager import EmptyManager
 # from django.contrib import auth
 # from django.core.exceptions import PermissionDenied
+from .utils import create_new_ref_number
 
 class UserManager(BaseUserManager):
 
@@ -43,11 +44,15 @@ AUTH_PROVIDERS = {'facebook': 'facebook', 'google': 'google',
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    id = models.AutoField(auto_created=True, primary_key=True, verbose_name='ID')
     email = models.EmailField(_('email address'), unique=True)
     first_name = models.CharField(_('first name'), max_length=30)
     last_name = models.CharField(_('last name'), max_length=30)
     profile_picture = models.ImageField(upload_to='pictures/%Y/%m/%d/', null=True, blank=True) # default='/Images/None/No-img.jpg'
     #password is at serializers.py model field
+
+    no_of_transactions = models.IntegerField(_('no of transactions'), null=True)
+    
     is_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -63,16 +68,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=255, blank=False,
         null=False, default=AUTH_PROVIDERS.get('email'))
 
-    CHOICES = (
-    ('5 star','5 star'),
-    ('4 star','4 star'),
-    ('3 star','3 star'),
-    ('2 star','2 star'),
-    ('1 star','1 star'),)
+    # CHOICES = (
+    # ('5 star','5 star'),
+    # ('4 star','4 star'),
+    # ('3 star','3 star'),
+    # ('2 star','2 star'),
+    # ('1 star','1 star'),)
 
 
-    rating = models.CharField(max_length=6, choices=CHOICES, default='5 star')
-    feedback_text = models.TextField(max_length=1000,null=True)
+    # rating = models.CharField(max_length=6, choices=CHOICES, default='5 star')
+    # feedback_text = models.TextField(max_length=1000,null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -98,7 +103,7 @@ class GuestUser(AbstractBaseUser):
     transaction_successful_ID= models.CharField(null=True, max_length=1000)
     first_name = models.CharField(_('first name'), max_length=30)
     last_name = models.CharField(_('last name'), max_length=30)
-    email = models.EmailField(_('email address'), unique=True)
+    email = models.EmailField(_('email address'), unique=False) #unique turned into flase, coz many people can donate using single mailID
     portfolio_name = models.CharField(max_length=1000)
     amount = models.IntegerField(null=True)
     charities = models.TextField(max_length=10000)
@@ -107,7 +112,7 @@ class GuestUser(AbstractBaseUser):
     client_ip = models.GenericIPAddressField(null = True)
 
     def __str__(self):
-        return self.email
+        return "%s %s" % (self.first_name, self.last_name)
 
 
 CHOICES = (
@@ -125,3 +130,20 @@ class RatingFeedback(models.Model):
     def __str__(self):
         return self.rating
 
+
+class UserTransaction(models.Model):
+    referrence_number = models.CharField(_('referrence number'),primary_key=True, max_length = 10, blank=True, editable=False, unique=True, default=create_new_ref_number)
+    transaction_successful_ID= models.CharField(null=True, max_length=1000)
+    portfolio_name = models.CharField(max_length=1000, null=True)
+    amount = models.IntegerField(null=True)
+    charities = models.TextField(max_length=10000,null=True)
+    user_id = models.ForeignKey(User, on_delete = models.CASCADE, null=False, default=True) #it will return email because the username field is email
+
+    # def __str__(self):
+    #     return self.user_id
+
+    def __str__(self):
+        return str(self.user_id)
+
+    # class Meta:
+    #     ordering = ['portfolio_name']

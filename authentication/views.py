@@ -239,7 +239,7 @@ class DeleteUserView(generics.DestroyAPIView):
     
     def get_object(self):
         return self.request.user
-
+"""
 class userRatingFeedbackView(generics.UpdateAPIView): #we can also use CreateApiView directly for rating and feedback. updateview is useful to edit there review 
 
     queryset = User.objects.all()
@@ -250,7 +250,7 @@ class userRatingFeedbackView(generics.UpdateAPIView): #we can also use CreateApi
 
     def get_object(self):
         return self.request.user
-
+"""
 #anonymous user rating API
 class AnonymousRatingFeedbackView(generics.CreateAPIView):
     
@@ -277,3 +277,41 @@ class TransactionSuccessfulAPIView(generics.UpdateAPIView):
     serializer_class = TransactionSuccessfulSerializer
     lookup_field = 'secret_key'
 
+#user txn stuff
+class UserTxnApiView(generics.CreateAPIView):
+    queryset = UserTransaction.objects.all() #sometimes you'll get confused. checkout it is guestuser or user
+    # permission_classes = (IsAuthenticated,)
+    # parser_classes = (MultiPartParser, FormParser) #we can remove this 
+    serializer_class = UserTxnSerializer
+    # lookup_field = 'name'
+
+    # def get_object(self):
+    #     return self.request.user
+
+class UserTxnSuccessfulAPIView(generics.UpdateAPIView):
+    queryset = UserTransaction.objects.all()
+    # permission_classes = (IsAuthenticated,)
+    parser_classes = (MultiPartParser, FormParser) #we can remove this 
+    serializer_class = UserTxnSuccessfulSerializer
+    lookup_field = 'referrence_number'
+
+#for only admin
+class AdminViewGuestUserAPI(generics.ListAPIView): #if you used RetrieveAPIView, it wont display entire list. 
+    queryset = GuestUser.objects.all()
+    serializer_class = AdminViewGuestUserSerializer
+    lookup_field = 'email' 
+
+class AdminViewUserAPI(generics.RetrieveAPIView):
+    # queryset = User.objects.all()
+    users = User.objects.all()
+    queryset = users
+    serializer_class = AdminViewUserSerializer
+    lookup_field = 'email'
+
+class NoOfTransactions(generics.ListAPIView):
+    queryset = UserTransaction.objects.all()
+    parser_classes = (MultiPartParser, FormParser) #we can remove this 
+    serializer_class = NoOfTransactionsSerializer
+    lookup_field = 'user_id'
+
+    

@@ -20,3 +20,12 @@ class Util:
         email = EmailMessage(
             subject=data['email_subject'], body=data['email_body'], to=[data['to_email']])
         EmailThread(email).start()
+
+
+
+#create ref number
+
+import random
+
+def create_new_ref_number():
+      return str(random.randint(1000000000, 9999999999))

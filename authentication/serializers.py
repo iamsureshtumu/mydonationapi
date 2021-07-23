@@ -15,7 +15,7 @@ from django.contrib.auth.password_validation import validate_password
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email', 'profile_picture')
+        fields = ('first_name', 'last_name', 'email', 'profile_picture') #'rating', 'feedback_text'
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=6, write_only=True, validators=[validate_password])
@@ -213,12 +213,13 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 
         return instance
 
+"""
 class userRatingFeedbackSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
         fields = ('rating', 'feedback_text')
-
+"""
 class AnonymousRatingFeedbackSerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -237,3 +238,36 @@ class TransactionSuccessfulSerializer(serializers.ModelSerializer):
     class Meta:
         model = GuestUser
         fields = ('secret_key', 'transaction_successful_ID')
+
+
+class UserTxnSerializer(serializers.ModelSerializer):
+    # user_id = serializers.IntegerField(source='email')
+
+    class Meta:
+        model = UserTransaction
+        fields = ('referrence_number', 'portfolio_name', 'amount', 'charities', 'user_id')
+
+class UserTxnSuccessfulSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserTransaction
+        fields = ('referrence_number', 'transaction_successful_ID')
+
+#for only admin
+class AdminViewGuestUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = GuestUser
+        fields = ("__all__")
+
+class AdminViewUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ("__all__")
+
+class NoOfTransactionsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserTransaction
+        fields = ("__all__")

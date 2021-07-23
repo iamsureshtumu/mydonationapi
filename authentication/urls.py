@@ -37,7 +37,12 @@ urlpatterns = [
     # path('dlist/',DetailsView.as_view(),name='dview'),
 
     path('14/guestuser_orderID/',GuestUserApiView.as_view(),name='guestuserorderid'),
-    # path('View_GuestUser/<id>/',ViewGuestUserAPI.as_view(),name='viewguestuser'),
-    path('15/Transaction_Successful/<secret_key>/', TransactionSuccessfulAPIView.as_view(), name='transactiontoken'),
+    path('15/guestuser_Transaction_Successful/<secret_key>/', TransactionSuccessfulAPIView.as_view(), name='transactiontoken'),
 
+    path('16/user_orderID/',UserTxnApiView.as_view(),name='userorderid'),
+    path('17/user_Transaction_Successful/<referrence_number>/', UserTxnSuccessfulAPIView.as_view(), name='usertransactiontoken'),
+
+    path('18/AdminView_GuestUser/<email>/',AdminViewGuestUserAPI.as_view(),name='adminviewguestuser'),
+    path('19/AdminView_User/<email>/',AdminViewUserAPI.as_view(),name='adminviewuser'), 
+    path('20/No_Of_Transactions_by_user/<user_id>/',NoOfTransactions.as_view(),name='nooftransactions'),
 ]
